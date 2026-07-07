@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DJ AB — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --accent: #a855f7;
+      --glow: 0 0 18px rgba(168,85,247,.4);
+      --bg:  #080808;
+      --bg2: #0d0d0d;
+      --bg3: #111;
+      --bg4: #161616;
+      --border: rgba(168,85,247,.12);
+      --border2: rgba(255,255,255,.06);
+      --text: #fff;
+      --muted: #666;
+      --muted2: #999;
+      --danger: #ff4444;
+      --success: #00c853;
+    }
+    html, body { height: 100%; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 240px; min-width: 240px;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      height: 100vh; overflow: hidden;
+    }
+    .brand { padding: 1.6rem 1.4rem 1.2rem; border-bottom: 1px solid var(--border); }
+    .brand-logo { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: .12em; color: var(--accent); text-shadow: var(--glow); line-height: 1; }
+    .brand-sub { font-size: .68rem; color: var(--muted); letter-spacing: .15em; text-transform: uppercase; margin-top: .25rem; }
+    .sidenav { flex: 1; padding: 1rem .6rem; overflow-y: auto; display: flex; flex-direction: column; gap: .18rem; }
+    .nav-item {
+      display: flex; align-items: center; gap: .8rem;
+      width: 100%; padding: .7rem .9rem; border-radius: 7px;
+      background: transparent; border: none;
+      color: var(--muted2); font-family: 'Inter', sans-serif;
+      font-size: .82rem; font-weight: 600; letter-spacing: .04em;
+      cursor: pointer; text-align: left;
+      transition: background .15s, color .15s;
+    }
+    .nav-item .icon { font-size: 1.05rem; opacity: .7; }
+    .nav-item:hover { background: var(--bg3); color: #ddd; }
+    .nav-item.active { background: rgba(168,85,247,.1); color: var(--accent); border: 1px solid rgba(168,85,247,.18); }
+    .nav-item.active .icon { opacity: 1; }
+    .nav-divider { height: 1px; background: var(--border); margin: .5rem .4rem; }
+    .sidebar-footer { padding: 1rem .8rem 1.2rem; border-top: 1px solid var(--border); }
+    .view-site-btn {
+      display: block; text-align: center; padding: .7rem; border-radius: 7px;
+      background: rgba(168,85,247,.08); border: 1px solid rgba(168,85,247,.25);
+      color: var(--accent); text-decoration: none;
+      font-size: .8rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+      transition: background .2s, box-shadow .2s;
+    }
+    .view-site-btn:hover { background: rgba(168,85,247,.16); box-shadow: var(--glow); }
+
+    /* ── MAIN ── */
+    .content { flex: 1; height: 100vh; overflow-y: auto; padding: 2.4rem 2.8rem; background: var(--bg); }
+    .sec { display: none; }
+    .sec.active { display: block; }
+
+    /* ── SECTION HEADER ── */
+    .sec-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+    .sec-label { font-size: .68rem; letter-spacing: .28em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: .3rem; }
+    .sec-title { font-family: 'Bebas Neue', sans-serif; font-size: 2.4rem; letter-spacing: .05em; line-height: 1; }
+    .sec-title span { color: var(--accent); }
+
+    /* ── CARDS ── */
+    .card { background: var(--bg3); border: 1px solid var(--border2); border-radius: 12px; padding: 1.8rem; margin-bottom: 1.4rem; }
+    .card-title { font-size: .72rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--muted2); margin-bottom: 1.2rem; }
+
+    /* ── FORM ELEMENTS ── */
+    .field { margin-bottom: 1.1rem; }
+    .field:last-child { margin-bottom: 0; }
+    label { display: block; font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: .4rem; }
+    input[type=text], input[type=email], input[type=password], input[type=url], textarea, select {
+      width: 100%; background: var(--bg4); border: 1px solid rgba(255,255,255,.1);
+      border-radius: 7px; padding: .75rem 1rem;
+      color: var(--text); font-family: 'Inter', sans-serif; font-size: .88rem;
+      outline: none; transition: border-color .2s, box-shadow .2s;
+    }
+    input[type=text]:focus, input[type=email]:focus, input[type=password]:focus,
+    input[type=url]:focus, textarea:focus, select:focus {
+      border-color: var(--accent); box-shadow: 0 0 0 3px rgba(168,85,247,.1);
+    }
+    textarea { resize: vertical; min-height: 90px; }
+    .field-row   { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .field-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .65rem 1.4rem; border-radius: 7px; border: none;
+      font-family: 'Inter', sans-serif; font-size: .82rem; font-weight: 700;
+      letter-spacing: .07em; text-transform: uppercase;
+      cursor: pointer; transition: box-shadow .2s, transform .15s, opacity .2s;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:disabled { opacity: .45; pointer-events: none; }
+    .btn-primary { background: var(--accent); color: #000; }
+    .btn-primary:hover { box-shadow: var(--glow); }
+    .btn-outline { background: transparent; border: 1px solid rgba(168,85,247,.35); color: var(--accent); }
+    .btn-outline:hover { background: rgba(168,85,247,.08); box-shadow: var(--glow); }
+    .btn-danger  { background: rgba(255,68,68,.12); border: 1px solid rgba(255,68,68,.3); color: var(--danger); }
+    .btn-danger:hover { background: rgba(255,68,68,.2); }
+    .btn-success { background: rgba(0,200,83,.12); border: 1px solid rgba(0,200,83,.3); color: var(--success); }
+    .btn-sm { padding: .45rem 1rem; font-size: .74rem; }
+    .save-row { display: flex; align-items: center; gap: 1rem; margin-top: 1.6rem; padding-top: 1.4rem; border-top: 1px solid var(--border2); }
+
+    /* ── OVERVIEW ── */
+    .overview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: var(--bg3); border: 1px solid var(--border2); border-radius: 12px; padding: 1.4rem; }
+    .stat-card-num { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; color: var(--accent); text-shadow: var(--glow); }
+    .stat-card-label { font-size: .74rem; color: var(--muted2); margin-top: .2rem; letter-spacing: .06em; }
+    .quick-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: .8rem; }
+    .quick-link { background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px; padding: 1.2rem; cursor: pointer; transition: border-color .2s, background .2s; text-align: center; }
+    .quick-link:hover { border-color: rgba(168,85,247,.3); background: var(--bg4); }
+    .quick-link-icon { font-size: 1.8rem; margin-bottom: .6rem; }
+    .quick-link-label { font-size: .78rem; font-weight: 600; color: #ccc; }
+
+    /* ── SERVICE CARDS (accordion) ── */
+    .service-editor { display: flex; flex-direction: column; gap: .8rem; }
+    .service-block { background: var(--bg4); border: 1px solid var(--border2); border-radius: 10px; overflow: hidden; }
+    .service-block-header {
+      display: flex; align-items: center; gap: .9rem;
+      padding: 1rem 1.2rem; cursor: pointer; user-select: none;
+      transition: background .15s;
+    }
+    .service-block-header:hover { background: rgba(168,85,247,.05); }
+    .service-block-emoji { font-size: 1.4rem; }
+    .service-block-name { font-size: .9rem; font-weight: 700; color: #ddd; flex: 1; }
+    .service-block-chevron { color: var(--accent); font-size: .8rem; transition: transform .2s; }
+    .service-block.open .service-block-chevron { transform: rotate(180deg); }
+    .service-block-body { display: none; padding: 1.2rem 1.4rem; border-top: 1px solid var(--border2); }
+    .service-block.open .service-block-body { display: block; }
+    /* ── IMAGE UPLOAD ── */
+    .img-upload-area { background: rgba(168,85,247,.04); border: 1px dashed rgba(168,85,247,.22); border-radius: 8px; padding: 1.2rem; text-align: center; }
+    .img-preview { width: 100%; max-height: 180px; object-fit: cover; border-radius: 7px; margin-bottom: .8rem; border: 1px solid rgba(168,85,247,.2); display: none; }
+    .img-placeholder { color: var(--muted); font-size: .82rem; margin-bottom: .8rem; }
+
+    /* ── MIXES ── */
+    .mix-rows { display: flex; flex-direction: column; gap: .9rem; }
+    .mix-row {
+      background: var(--bg4); border: 1px solid var(--border2);
+      border-radius: 10px; padding: 1rem 1.2rem;
+    }
+    .mix-row-top { display: grid; grid-template-columns: 2rem 1fr 1fr 7rem; gap: .8rem; align-items: center; margin-bottom: .8rem; }
+    .mix-row-num { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: var(--muted); }
+    .mix-row-bottom { display: flex; align-items: center; gap: .8rem; padding-top: .8rem; border-top: 1px solid var(--border2); flex-wrap: wrap; }
+    .mix-audio-label { font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+    .mix-audio-name {
+      font-size: .8rem; color: var(--accent); background: rgba(168,85,247,.07);
+      border: 1px solid rgba(168,85,247,.18); border-radius: 5px;
+      padding: .3rem .7rem; flex: 1; min-width: 0;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .mix-audio-name.empty { color: var(--muted); background: transparent; border-color: rgba(255,255,255,.07); }
+    .mix-upload-input { display: none; }
+    .mix-upload-btn { white-space: nowrap; }
+    .mix-remove-btn { white-space: nowrap; }
+    .upload-progress {
+      font-size: .75rem; color: var(--muted2); padding: .3rem .6rem;
+      background: rgba(168,85,247,.05); border-radius: 5px;
+    }
+
+    /* ── SOCIALS ── */
+    .social-platform-block {
+      background: var(--bg4); border: 1px solid var(--border2);
+      border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1rem;
+    }
+    .social-platform-block:last-child { margin-bottom: 0; }
+    .social-platform-header { display: flex; align-items: center; gap: .8rem; margin-bottom: 1rem; }
+    .social-platform-icon { font-size: 1.4rem; }
+    .social-platform-name { font-size: .72rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: var(--accent); }
+
+    /* ── AVAILABILITY CALENDAR ── */
+    .cal-container { max-width: 680px; }
+    .cal-header-dash { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; }
+    .cal-month { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: .07em; }
+    .cal-arrow {
+      background: var(--bg4); border: 1px solid rgba(168,85,247,.25);
+      color: var(--accent); width: 36px; height: 36px; border-radius: 7px;
+      font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background .15s, box-shadow .15s;
+    }
+    .cal-arrow:hover { background: rgba(168,85,247,.12); box-shadow: var(--glow); }
+    .cal-grid-dash { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+    .cal-dow-dash { text-align: center; font-size: .65rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding: .3rem 0; }
+    .cal-cell { aspect-ratio: 1; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: .84rem; font-weight: 600; position: relative; transition: transform .12s; }
+    .cal-cell.empty { background: transparent; }
+    .cal-cell.past { background: rgba(255,255,255,.02); color: rgba(255,255,255,.15); }
+    .cal-cell.today { background: rgba(168,85,247,.1); border: 1px solid var(--accent); color: var(--accent); }
+    .cal-cell.available { background: rgba(168,85,247,.08); border: 1px solid rgba(168,85,247,.2); cursor: pointer; }
+    .cal-cell.available:hover { background: rgba(168,85,247,.18); transform: scale(1.07); border-color: var(--accent); }
+    .cal-cell.booked { background: rgba(255,68,68,.1); border: 1px solid rgba(255,68,68,.25); color: rgba(255,100,100,.7); cursor: pointer; }
+    .cal-cell.booked:hover { background: rgba(255,68,68,.2); transform: scale(1.07); }
+    .cal-legend-dash { display: flex; gap: 1.6rem; flex-wrap: wrap; margin-top: 1.2rem; }
+    .leg-item { display: flex; align-items: center; gap: .5rem; font-size: .76rem; color: var(--muted2); }
+    .leg-dot { width: 12px; height: 12px; border-radius: 3px; }
+    .leg-dot.available { background: rgba(168,85,247,.12); border: 1px solid rgba(168,85,247,.4); }
+    .leg-dot.booked    { background: rgba(255,68,68,.12);  border: 1px solid rgba(255,68,68,.4); }
+    .leg-dot.today     { background: rgba(168,85,247,.1);   border: 1px solid var(--accent); }
+    .cal-tip { font-size: .76rem; color: var(--muted); margin-top: 1rem; line-height: 1.6; }
+
+    /* ── INBOX ── */
+    .status-badge { display: inline-flex; align-items: center; gap: .4rem; font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: .3rem .8rem; border-radius: 100px; }
+    .badge-on  { background: rgba(0,200,83,.12);  border: 1px solid rgba(0,200,83,.3);  color: var(--success); }
+    .badge-off { background: rgba(255,68,68,.1);  border: 1px solid rgba(255,68,68,.3); color: var(--danger); }
+    .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+    .submission-list { display: flex; flex-direction: column; gap: .9rem; }
+    .submission-card { background: var(--bg4); border: 1px solid var(--border2); border-radius: 10px; padding: 1.2rem 1.4rem; }
+    .sub-header { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: .5rem; margin-bottom: .8rem; }
+    .sub-name { font-weight: 700; font-size: .95rem; }
+    .sub-meta { display: flex; flex-wrap: wrap; gap: .8rem; margin-bottom: .8rem; }
+    .sub-tag { font-size: .72rem; font-weight: 600; padding: .25rem .7rem; border-radius: 4px; background: rgba(168,85,247,.08); border: 1px solid rgba(168,85,247,.15); color: var(--accent); }
+    .sub-message { font-size: .84rem; color: #aaa; line-height: 1.65; border-left: 2px solid rgba(168,85,247,.2); padding-left: .9rem; margin-bottom: .9rem; }
+    .sub-actions { display: flex; gap: .6rem; flex-wrap: wrap; }
+    .sub-date { font-size: .72rem; color: var(--muted); }
+    .empty-state { text-align: center; padding: 3rem 1rem; color: var(--muted); font-size: .9rem; }
+    .empty-state-icon { font-size: 2.5rem; margin-bottom: .8rem; opacity: .4; }
+
+    /* ── TOAST ── */
+    #toast { position: fixed; bottom: 2rem; right: 2rem; z-index: 999; display: flex; flex-direction: column; gap: .6rem; pointer-events: none; }
+    .toast-msg { padding: .75rem 1.2rem; border-radius: 8px; font-size: .84rem; font-weight: 600; animation: slideIn .25s ease; pointer-events: auto; }
+    .toast-ok  { background: #0d2016; border: 1px solid rgba(0,200,83,.35);  color: #4eff9a; }
+    .toast-err { background: #200d0d; border: 1px solid rgba(255,68,68,.35); color: #ff8080; }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+    /* ── HELPERS ── */
+    .help-text { font-size: .78rem; color: var(--muted); line-height: 1.65; margin-top: .5rem; }
+    .help-text a { color: var(--accent); }
+    .info-box { background: rgba(168,85,247,.05); border: 1px solid rgba(168,85,247,.15); border-radius: 8px; padding: 1rem 1.2rem; font-size: .82rem; color: #aaa; line-height: 1.7; }
+    .info-box strong { color: var(--accent); }
+
+    /* ── GENRE CHIPS ── */
+    .genre-chips { display: flex; flex-wrap: wrap; gap: .5rem; background: var(--bg4); border: 1px solid rgba(255,255,255,.1); border-radius: 7px; padding: .6rem .75rem; min-height: 46px; align-items: center; cursor: text; }
+    .genre-chips.focused { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(168,85,247,.1); }
+    .genre-chip { display: flex; align-items: center; gap: .35rem; background: rgba(168,85,247,.1); border: 1px solid rgba(168,85,247,.25); border-radius: 100px; padding: .25rem .7rem; font-size: .78rem; font-weight: 600; color: var(--accent); }
+    .genre-chip-remove { background: none; border: none; color: rgba(168,85,247,.6); cursor: pointer; font-size: .8rem; padding: 0; line-height: 1; }
+    .genre-chip-remove:hover { color: var(--accent); }
+    .genre-input-inner { background: none; border: none; outline: none; color: var(--text); font-family: 'Inter', sans-serif; font-size: .88rem; min-width: 80px; flex: 1; }
+
+    /* ── PHOTO GALLERY ── */
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: .9rem; }
+    .gallery-item { position: relative; border-radius: 8px; overflow: hidden; border: 1px solid var(--border2); background: var(--bg4); aspect-ratio: 1; }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .gallery-item-name { position: absolute; left: 0; right: 0; bottom: 0; padding: .3rem .4rem; font-size: .62rem; color: #eee; background: linear-gradient(0deg, rgba(0,0,0,.75), transparent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .gallery-item-remove { position: absolute; top: .35rem; right: .35rem; width: 22px; height: 22px; border-radius: 50%; background: rgba(20,20,20,.75); border: 1px solid rgba(255,68,68,.4); color: var(--danger); font-size: .75rem; line-height: 1; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .gallery-item-remove:hover { background: rgba(255,68,68,.25); }
+    .gallery-empty { color: var(--muted); font-size: .82rem; padding: 1rem 0; }
+
+    /* ── ASSIGN PHOTOS ── */
+    .assign-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
+    .assign-slot { background: var(--bg4); border: 1px solid var(--border2); border-radius: 10px; padding: 1rem; }
+    .assign-slot-label { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted2); margin-bottom: .6rem; }
+    .assign-slot-preview { width: 100%; height: 100px; object-fit: cover; border-radius: 6px; background: var(--bg3); margin-bottom: .6rem; display: block; }
+    .assign-slot-preview.empty { display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: .7rem; }
+
+    /* ── COLOR SCHEME ── */
+    .color-presets { display: flex; flex-wrap: wrap; gap: .8rem; }
+    .color-preset { display: flex; align-items: center; gap: .5rem; background: var(--bg4); border: 1px solid var(--border2); border-radius: 8px; padding: .55rem .9rem; cursor: pointer; font-size: .78rem; color: #ccc; transition: border-color .15s; }
+    .color-preset:hover { border-color: rgba(168,85,247,.4); }
+    .color-preset-swatch { width: 20px; height: 20px; border-radius: 50%; border: 1px solid rgba(255,255,255,.2); }
+    .color-input-row { display: flex; align-items: center; gap: .6rem; }
+    .color-input-row input[type=color] { width: 44px; height: 40px; padding: 2px; border: 1px solid rgba(255,255,255,.1); border-radius: 7px; background: var(--bg4); cursor: pointer; }
+    .color-input-row input[type=text] { flex: 1; }
+
+    /* ── EPK ── */
+    .epk-current { display: flex; align-items: center; gap: .9rem; flex-wrap: wrap; background: var(--bg4); border: 1px solid var(--border2); border-radius: 10px; padding: 1rem 1.2rem; }
+    .epk-current-icon { font-size: 1.6rem; }
+    .epk-current-name { font-size: .88rem; font-weight: 600; color: #ddd; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-logo">DJ AB</div>
+    <div class="brand-sub">Dashboard</div>
+  </div>
+  <nav class="sidenav">
+    <button class="nav-item active" data-sec="overview"><span class="icon">🏠</span> Overview</button>
+    <div class="nav-divider"></div>
+    <button class="nav-item" data-sec="about"><span class="icon">👤</span> About & Hero</button>
+    <button class="nav-item" data-sec="services"><span class="icon">🎛️</span> Services</button>
+    <button class="nav-item" data-sec="mixes"><span class="icon">🎵</span> Mixes</button>
+    <button class="nav-item" data-sec="genres"><span class="icon">🎚️</span> Genres</button>
+    <button class="nav-item" data-sec="socials"><span class="icon">📲</span> Socials</button>
+    <button class="nav-item" data-sec="availability"><span class="icon">📅</span> Availability</button>
+    <button class="nav-item" data-sec="customize"><span class="icon">🖼️</span> Photos & Theme</button>
+    <button class="nav-item" data-sec="epk"><span class="icon">📁</span> Press Kit</button>
+    <div class="nav-divider"></div>
+    <button class="nav-item" data-sec="inbox"><span class="icon">📬</span> Inbox</button>
+  </nav>
+  <div class="sidebar-footer">
+    <a href="/" target="_blank" class="view-site-btn">⬡ View Live Site</a>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="content">
+
+  <!-- OVERVIEW -->
+  <section id="sec-overview" class="sec active">
+    <div class="sec-header">
+      <div>
+        <div class="sec-label">Welcome Back</div>
+        <h1 class="sec-title">DJ AB <span>Dashboard</span></h1>
+      </div>
+    </div>
+    <div class="overview-grid" id="overview-stats">
+      <div class="stat-card">
+        <div class="stat-card-num" id="ov-submissions">—</div>
+        <div class="stat-card-label">Booking Inquiries</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-num" id="ov-booked">—</div>
+        <div class="stat-card-label">Booked Dates</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-num" id="ov-genres">—</div>
+        <div class="stat-card-label">Genres Listed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-num" id="ov-email">—</div>
+        <div class="stat-card-label">Email Status</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Quick Actions</div>
+      <div class="quick-links">
+        <div class="quick-link" onclick="showSec('about')"><div class="quick-link-icon">👤</div><div class="quick-link-label">Edit About</div></div>
+        <div class="quick-link" onclick="showSec('services')"><div class="quick-link-icon">🎛️</div><div class="quick-link-label">Edit Services</div></div>
+        <div class="quick-link" onclick="showSec('mixes')"><div class="quick-link-icon">🎵</div><div class="quick-link-label">Upload Mixes</div></div>
+        <div class="quick-link" onclick="showSec('socials')"><div class="quick-link-icon">📲</div><div class="quick-link-label">Edit Socials</div></div>
+        <div class="quick-link" onclick="showSec('availability')"><div class="quick-link-icon">📅</div><div class="quick-link-label">Edit Availability</div></div>
+        <div class="quick-link" onclick="showSec('customize')"><div class="quick-link-icon">🖼️</div><div class="quick-link-label">Photos & Theme</div></div>
+        <div class="quick-link" onclick="showSec('epk')"><div class="quick-link-icon">📁</div><div class="quick-link-label">Upload Press Kit</div></div>
+        <div class="quick-link" onclick="showSec('inbox')"><div class="quick-link-icon">📬</div><div class="quick-link-label">View Inbox</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT & HERO -->
+  <section id="sec-about" class="sec">
+    <div class="sec-header">
+      <div><div class="sec-label">Website Content</div><h1 class="sec-title">About & <span>Hero</span></h1></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Hero Banner</div>
+      <div class="field">
+        <label>Tag Line (small text above your name)</label>
+        <input type="text" id="heroTag" placeholder="Available for bookings worldwide" />
+      </div>
+      <div class="field">
+        <label>Subtitle / Genres Tagline</label>
+        <input type="text" id="heroSub" placeholder="House • Hip-Hop • Top 40 • Open Format" />
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Bio Paragraphs</div>
+      <div class="field"><label>Paragraph 1</label><textarea id="bio0" rows="3"></textarea></div>
+      <div class="field"><label>Paragraph 2</label><textarea id="bio1" rows="3"></textarea></div>
+      <div class="field"><label>Paragraph 3</label><textarea id="bio2" rows="3"></textarea></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Stats</div>
+      <div class="field-row" id="stats-grid"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">About Photo</div>
+      <div class="info-box" style="margin-bottom:1.2rem">
+        Upload a photo to replace the placeholder icon in the About section. Square or portrait JPG/PNG recommended.
+      </div>
+      <div class="img-upload-area">
+        <img id="about-img-preview" class="img-preview" alt="Current about photo" />
+        <div id="about-img-placeholder" class="img-placeholder">No photo uploaded — placeholder showing</div>
+        <div style="display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center;">
+          <input type="file" id="about-photo-file" accept="image/*" style="display:none" />
+          <button class="btn btn-outline btn-sm" onclick="document.getElementById('about-photo-file').click()">⬆ Upload Photo</button>
+          <button class="btn btn-danger btn-sm" id="about-img-remove-btn" style="display:none" onclick="removeAboutImage()">✕ Remove</button>
+          <span id="about-img-status" style="font-size:.75rem;color:var(--muted2);align-self:center;"></span>
+        </div>
+      </div>
+    </div>
+    <div class="save-row">
+      <button class="btn btn-primary" onclick="saveAbout()">Save Changes</button>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="sec-services" class="sec">
+    <div class="sec-header">
+      <div><div class="sec-label">Website Content</div><h1 class="sec-title">DJ <span>Services</span></h1></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Service Cards</div>
+      <div class="service-editor" id="services-editor"></div>
+    </div>
+    <div class="save-row">
+      <button class="btn btn-primary" onclick="saveServices()">Save Changes</button>
+    </div>
+  </section>
+
+  <!-- MIXES -->
+  <section id="sec-mixes" class="sec">
+    <div class="sec-header">
+      <div><div class="sec-label">Website Content</div><h1 class="sec-title">Featured <span>Mixes</span></h1></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Track Info & Audio Files</div>
+      <div class="info-box" style="margin-bottom:1.4rem">
+        Edit track titles and genres below. To make a mix <strong>playable on your website</strong>, click <strong>Upload Audio</strong> and choose an <strong>MP3 or WAV</strong> file from your computer. The file uploads instantly — no save needed.
+      </div>
+      <div class="mix-rows" id="mixes-editor"></div>
+    </div>
+    <div class="save-row">
+      <button class="btn btn-primary" onclick="saveMixes()">Save Track Info</button>
+    </div>
+  </section>
+
+  <!-- GENRES -->
+  <section id="sec-genres" class="sec">
+    <div class="sec-header">
+      <div><div class="sec-label">Website Content</div><h1 class="sec-title">Music <span>Genres</span></h1></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Genre Tags</div>
+      <p class="help-text" style="margin-bottom:1rem">Click a genre to remove it. Type a new genre and press <strong>Enter</strong> or <strong>,</strong> to add it.</p>
+      <div class="genre-chips" id="genre-chips" onclick="document.getElementById('genre-input').focus()">
+        <input class="genre-input-inner" id="genre-input" placeholder="Add genre…" />
+      </div>
+    </div>
+    <div class="save-row">
+      <button class="btn btn-primary" onclick="saveGenres()">Save Changes</button>
+    </div>
+  </section>
+
+  <!-- SOCIALS -->
+  <section id="sec-socials" class="sec">
+    <div class="sec-header">
+      <div><div class="sec-label">Website Content</div><h1 class="sec-title">Social <span>Media</span></h1></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Platform Links</div>
+      <div class="info-box" style="margin-bottom:1.4rem">
+        Enter your full profile URLs and handle names below. These appear in the <strong>Socials</strong> section on your website. Leave a URL blank to keep the card non-clickable.
+      </div>
+
+      <div class="social-platform-block">
+        <div class="social-platform-header">
+          <span class="social-platform-icon">🎵</span>
+          <span class="social-platform-name">TikTok</span>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Profile URL</label>
+            <input type="url" id="tiktok_url" placeholder="https://www.tiktok.com/@djab" />
+          </div>
+          <div class="field">
+            <label>Handle / Display Name</label>
+            <input type="text" id="tiktok_handle" placeholder="@djab" />
+          </div>
+        </div>
+      </div>
+
+      <div class="social-platform-block">
+        <div class="social-platform-header">
+          <span class="social-platform-icon">📸</span>
+          <span class="social-platform-name">Instagram</span>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Profile URL</label>
+            <input type="url" id="instagram_url" placeholder="https://www.instagram.com/djab" />
+          </div>
+          <div class="field">
+            <label>Handle / Display Name</label>
+            <input type="text" id="instagram_handle" placeholder="@djab" />
+          </div>
+        </div>
+      </div>
+
+      <div class="social-platform-block">
+        <div class="social-platform-header">
+          <span class="social-platform-icon">▶️</span>
+          <span class="social-platform-name">YouTube</span>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Channel URL</label>
+            <input type="url" id="youtube_url" placeholder="https://www.youtube.com/@djab" />
+          </div>
+          <div class="field">
+            <label>Channel Name</label>
+            <input type="text" id="youtube_handle" placeholder="DJ AB" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="save-row">
+      <button class="btn btn-primary" onclick="saveSocials()">Save Social Links</button>
+    </div>
+  </section>
+
+  <!-- AVAILABILITY -->
+  <section id="sec-availability" class="sec">
+    <div class="sec-header">
+      <div><div class="sec-label">Calendar</div><h1 class="sec-title">DJ AB <span>Availability</span></h1></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Booked Dates</div>
+      <div class="info-box" style="margin-bottom:1.4rem">
+        <strong>Click any future date</strong> to toggle it between <strong>Available</strong> (purple) and <strong>Booked</strong> (red). Booked dates appear crossed out on your website. Hit <strong>Save Changes</strong> when done.
+      </div>
+      <div class="cal-container">
+        <div class="cal-header-dash">
+          <button class="cal-arrow" id="dash-prev">&#8592;</button>
+          <div class="cal-month" id="dash-month"></div>
+          <button class="cal-arrow" id="dash-next">&#8594;</button>
+        </div>
+        <div class="cal-grid-dash" id="dash-grid"></div>
+        <div class="cal-legend-dash">
+          <div class="leg-item"><div class="leg-dot available"></div> Available</div>
+          <div class="leg-item"><div class="leg-dot booked"></div> Booked</div>
+          <div class="leg-item"><div class="leg-dot today"></div> Today</div>
+        </div>
+        <p class="cal-tip">Changes only take effect after clicking "Save Changes" below.</p>
+      </div>
+    </div>
+    <div class="save-row">
+      <button class="btn btn-primary" onclick="saveAvailability()">Save Changes</button>
+    </div>
+  </section>
+
+  <!-- PHOTOS & THEME -->
+  <section id="sec-customize" class="sec">
+    <div class="sec-header">
+      <div><div class="sec-label">Website Content</div><h1 class="sec-title">Photos & <span>Theme</span></h1></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Photo Library</div>
+      <div class="info-box" style="margin-bottom:1.2rem">
+        Upload photos here to build your library. Use <strong>Assign Photos to Sections</strong> below to place any library photo on your website — no re-uploading needed to swap one out.
+      </div>
+      <div style="display:flex;align-items:center;gap:.9rem;margin-bottom:1.2rem;flex-wrap:wrap">
+        <input type="file" id="gallery-upload-file" accept="image/*" multiple style="display:none" />
+        <button class="btn btn-outline btn-sm" onclick="document.getElementById('gallery-upload-file').click()">⬆ Upload Photos</button>
+        <span id="gallery-upload-status" style="font-size:.75rem;color:var(--muted2)"></span>
+      </div>
+      <div class="gallery-grid" id="gallery-grid"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Assign Photos to Sections</div>
+      <p class="help-text" style="margin-bottom:1.2rem">Pick which photo appears in each spot on your website. Changes apply instantly — no save button needed.</p>
+      <div class="assign-grid" id="assign-grid"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Color Scheme</div>
+      <div class="info-box" style="margin-bottom:1.2rem">
+        Choose the two accent colors used across your website (buttons, highlights, glows). Pick a preset or set custom colors, then apply.
+      </div>
+      <div class="color-presets" id="color-presets"></div>
+      <div class="field-row" style="margin-top:1.4rem">
+        <div class="field">
+          <label>Primary Accent</label>
+          <div class="color-input-row">
+            <input type="color" id="accent-color" />
+            <input type="text" id="accent-color-text" placeholder="#a855f7" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Secondary Accent</label>
+          <div class="color-input-row">
+            <input type="color" id="accent2-color" />
+            <input type="text" id="accent2-color-text" placeholder="#d946ef" />
+          </div>
+        </div>
+      </div>
+      <div class="save-row">
+        <button class="btn btn-primary" onclick="saveColorScheme()">Apply Color Scheme</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRESS KIT (EPK) -->
+  <section id="sec-epk" class="sec">
+    <div class="sec-header">
+      <div><div class="sec-label">Media Kit</div><h1 class="sec-title">Press <span>Kit</span></h1></div>
+    </div>
+    <div class="card">
+      <div class="card-title">EPK File</div>
+      <div class="info-box" style="margin-bottom:1.4rem">
+        Upload your Electronic Press Kit (PDF, Word doc, or ZIP). It becomes downloadable from the <strong>Press Kit</strong> section on your live website.
+      </div>
+      <div id="epk-current" class="epk-current" style="display:none">
+        <span class="epk-current-icon">📄</span>
+        <span class="epk-current-name" id="epk-current-name"></span>
+        <a class="btn btn-outline btn-sm" id="epk-view-link" href="#" target="_blank">↗ View / Download</a>
+        <button class="btn btn-danger btn-sm" onclick="removeEpk()">✕ Remove</button>
+      </div>
+      <div id="epk-empty" class="img-placeholder">No press kit uploaded yet.</div>
+      <div style="margin-top:1.2rem">
+        <input type="file" id="epk-upload-file" accept=".pdf,.doc,.docx,.zip" style="display:none" />
+        <button class="btn btn-outline btn-sm" onclick="document.getElementById('epk-upload-file').click()">⬆ Upload Press Kit</button>
+        <span id="epk-upload-status" style="font-size:.75rem;color:var(--muted2);margin-left:.7rem"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- INBOX -->
+  <section id="sec-inbox" class="sec">
+    <div class="sec-header">
+      <div><div class="sec-label">Contact Form</div><h1 class="sec-title">Booking <span>Inbox</span></h1></div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="display:flex;align-items:center;justify-content:space-between">
+        <span>Gmail Settings</span>
+        <span id="email-status-badge"></span>
+      </div>
+      <div class="info-box" style="margin-bottom:1.4rem">
+        Contact form submissions are automatically <strong>emailed to you</strong> and <strong>stored here</strong> in the dashboard.<br>
+        To enable email sending, enter your Gmail address and a <strong>Gmail App Password</strong>
+        (not your regular password) — create one at
+        <a href="https://myaccount.google.com/apppasswords" target="_blank" style="color:var(--accent)">myaccount.google.com/apppasswords</a>.
+        2-Step Verification must be enabled on your Google account first.
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Gmail Address (sender)</label>
+          <input type="email" id="emailUser" placeholder="you@gmail.com" />
+        </div>
+        <div class="field">
+          <label>Delivery Address (receives inquiries)</label>
+          <input type="email" id="emailTo" placeholder="inquiries.djab@gmail.com" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Gmail App Password</label>
+        <input type="password" id="emailPass" placeholder="xxxx xxxx xxxx xxxx" autocomplete="new-password" />
+        <p class="help-text">Leave blank to keep the existing password. Stored locally on this machine only.</p>
+      </div>
+      <div class="save-row" style="margin-top:1.2rem;padding-top:1.2rem">
+        <button class="btn btn-primary" onclick="saveEmailConfig()">Save Email Settings</button>
+        <button class="btn btn-outline btn-sm" onclick="testEmail()">Send Test Email</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="display:flex;align-items:center;justify-content:space-between">
+        <span>Received Inquiries</span>
+        <button class="btn btn-outline btn-sm" onclick="loadSubmissions()">↻ Refresh</button>
+      </div>
+      <div id="submissions-list"></div>
+    </div>
+  </section>
+
+</main>
+
+<div id="toast"></div>
+
+<script>
+// ── NAVIGATION ────────────────────────────────────────────────────────────────
+
+function showSec(id) {
+  document.querySelectorAll('.sec').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  document.querySelector(`[data-sec="${id}"]`).classList.add('active');
+}
+
+document.querySelectorAll('.nav-item').forEach(btn => {
+  btn.addEventListener('click', () => showSec(btn.dataset.sec));
+});
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+
+function toast(msg, type = 'ok') {
+  const el = document.createElement('div');
+  el.className = `toast-msg toast-${type}`;
+  el.textContent = msg;
+  document.getElementById('toast').appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+// ── CONTENT STATE ─────────────────────────────────────────────────────────────
+
+let state = {};
+
+async function loadContent() {
+  try {
+    const r = await fetch('/api/content');
+    state = await r.json();
+    populateAll();
+  } catch {
+    toast('Could not load website content.', 'err');
+  }
+}
+
+function populateAll() {
+  // Hero
+  document.getElementById('heroTag').value = state.heroTag || '';
+  document.getElementById('heroSub').value = state.heroSub || '';
+
+  // Bio
+  (state.bio || []).forEach((p, i) => {
+    const el = document.getElementById('bio' + i);
+    if (el) el.value = p;
+  });
+
+  // Stats
+  const grid = document.getElementById('stats-grid');
+  grid.innerHTML = '';
+  (state.stats || []).forEach((s, i) => {
+    grid.innerHTML += `
+      <div class="field">
+        <label>Stat ${i + 1} — Number</label>
+        <input type="text" id="stat-num-${i}" value="${esc(s.num)}" placeholder="500+" />
+        <label style="margin-top:.6rem">Label</label>
+        <input type="text" id="stat-lbl-${i}" value="${esc(s.label)}" placeholder="Events Performed" />
+      </div>`;
+  });
+
+  // Services (accordion)
+  const svcEl = document.getElementById('services-editor');
+  svcEl.innerHTML = '';
+  (state.services || []).forEach((s, i) => {
+    svcEl.innerHTML += `
+      <div class="service-block" id="svc-block-${i}">
+        <div class="service-block-header" onclick="toggleSvc(${i})">
+          <span class="service-block-emoji" id="svc-emoji-${i}">${esc(s.icon) || '🎛️'}</span>
+          <span class="service-block-name" id="svc-name-${i}">${esc(s.title) || 'Service ' + (i + 1)}</span>
+          <span class="service-block-chevron">▾</span>
+        </div>
+        <div class="service-block-body" id="svc-body-${i}">
+          <div class="field-row-3" style="margin-bottom:1rem">
+            <div class="field">
+              <label>Icon (emoji)</label>
+              <input type="text" id="svc-icon-${i}" value="${esc(s.icon)}" placeholder="🎛️"
+                oninput="document.getElementById('svc-emoji-${i}').textContent=this.value||'🎛️'" />
+            </div>
+            <div class="field" style="grid-column:span 2">
+              <label>Title</label>
+              <input type="text" id="svc-title-${i}" value="${esc(s.title)}" placeholder="Weddings"
+                oninput="document.getElementById('svc-name-${i}').textContent=this.value||'Service ${i+1}'" />
+            </div>
+          </div>
+          <div class="field" style="margin-bottom:1.2rem">
+            <label>Description</label>
+            <textarea id="svc-desc-${i}" rows="2">${esc(s.description)}</textarea>
+          </div>
+          <div class="field">
+            <label>Service Photo (optional)</label>
+            <div class="img-upload-area">
+              <img id="svc-img-preview-${i}" class="img-preview" alt="Service photo" />
+              <div id="svc-img-placeholder-${i}" class="img-placeholder">No photo uploaded</div>
+              <div style="display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center;">
+                <input type="file" id="svc-img-file-${i}" accept="image/*" style="display:none" />
+                <button class="btn btn-outline btn-sm" onclick="document.getElementById('svc-img-file-${i}').click()">⬆ Upload Image</button>
+                <button class="btn btn-danger btn-sm" id="svc-img-remove-${i}" style="display:none" onclick="removeSvcImage(${i})">✕ Remove</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  });
+  wireSvcImageInputs();
+  loadServiceImages();
+
+  // Mixes
+  buildMixRows(state.mixes || []);
+
+  // Genres
+  buildGenreChips(state.genres || []);
+
+  // Availability
+  dashBookedDates = new Set(state.bookedDates || []);
+  renderDashCal();
+
+  // Overview stats
+  document.getElementById('ov-booked').textContent = (state.bookedDates || []).length;
+  document.getElementById('ov-genres').textContent = (state.genres || []).length;
+}
+
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── MIXES EDITOR ──────────────────────────────────────────────────────────────
+
+function buildMixRows(mixes) {
+  const container = document.getElementById('mixes-editor');
+  container.innerHTML = '';
+  mixes.forEach((m, i) => {
+    const hasAudio = m.audioFile && m.audioFile.trim();
+    const row = document.createElement('div');
+    row.className = 'mix-row';
+    row.id = 'mix-row-' + i;
+    row.innerHTML = `
+      <div class="mix-row-top">
+        <div class="mix-row-num">${String(i+1).padStart(2,'0')}</div>
+        <input type="text" id="mix-title-${i}" value="${esc(m.title)}" placeholder="Mix title…" />
+        <input type="text" id="mix-genre-${i}" value="${esc(m.genre)}" placeholder="Genre / Style" />
+        <input type="text" id="mix-dur-${i}"   value="${esc(m.duration)}" placeholder="1:02:14" />
+      </div>
+      <div class="mix-row-bottom">
+        <span class="mix-audio-label">Audio File</span>
+        <span class="mix-audio-name ${hasAudio ? '' : 'empty'}" id="mix-audio-name-${i}">
+          ${hasAudio ? esc(m.audioFile) : 'No file uploaded'}
+        </span>
+        <input type="file" class="mix-upload-input" id="mix-file-${i}" accept=".mp3,.wav,.ogg,.flac,.m4a" />
+        <button class="btn btn-outline btn-sm mix-upload-btn" onclick="triggerUpload(${i})">⬆ Upload Audio</button>
+        ${hasAudio ? `<button class="btn btn-danger btn-sm mix-remove-btn" id="mix-remove-${i}" onclick="removeAudio(${i})">✕ Remove</button>` : ''}
+      </div>`;
+    container.appendChild(row);
+
+    // File input change handler
+    document.getElementById('mix-file-' + i).addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) uploadAudio(i, file);
+    });
+  });
+}
+
+function triggerUpload(idx) {
+  document.getElementById('mix-file-' + idx).click();
+}
+
+async function uploadAudio(idx, file) {
+  const nameEl   = document.getElementById('mix-audio-name-' + idx);
+  const uploadBtn = document.querySelector(`#mix-row-${idx} .mix-upload-btn`);
+
+  nameEl.className   = 'mix-audio-name empty';
+  nameEl.textContent = 'Uploading…';
+  uploadBtn.disabled = true;
+
+  const form = new FormData();
+  form.append('audio', file, file.name);
+
+  try {
+    const r = await fetch('/api/audio/upload/' + idx, { method: 'POST', body: form });
+    const j = await r.json();
+    if (j.ok) {
+      nameEl.className   = 'mix-audio-name';
+      nameEl.textContent = j.filename;
+
+      // Add remove button if not present
+      let removeBtn = document.getElementById('mix-remove-' + idx);
+      if (!removeBtn) {
+        removeBtn = document.createElement('button');
+        removeBtn.className = 'btn btn-danger btn-sm mix-remove-btn';
+        removeBtn.id = 'mix-remove-' + idx;
+        removeBtn.textContent = '✕ Remove';
+        removeBtn.onclick = () => removeAudio(idx);
+        document.querySelector('#mix-row-' + idx + ' .mix-row-bottom').appendChild(removeBtn);
+      }
+
+      toast(`Track ${idx + 1} audio uploaded: ${j.filename}`, 'ok');
+      await loadContent();
+    } else {
+      nameEl.textContent = 'Upload failed';
+      toast(j.error || 'Upload failed.', 'err');
+    }
+  } catch {
+    nameEl.textContent = 'Upload error';
+    toast('Upload error — is the server running?', 'err');
+  } finally {
+    uploadBtn.disabled = false;
+    document.getElementById('mix-file-' + idx).value = '';
+  }
+}
+
+async function removeAudio(idx) {
+  try {
+    const r = await fetch('/api/audio/remove/' + idx, { method: 'POST', headers: {'Content-Type':'application/json'}, body: '{}' });
+    const j = await r.json();
+    if (j.ok) {
+      const nameEl = document.getElementById('mix-audio-name-' + idx);
+      nameEl.className   = 'mix-audio-name empty';
+      nameEl.textContent = 'No file uploaded';
+      const removeBtn = document.getElementById('mix-remove-' + idx);
+      if (removeBtn) removeBtn.remove();
+      toast(`Track ${idx + 1} audio removed.`, 'ok');
+      await loadContent();
+    } else {
+      toast(j.error || 'Could not remove audio.', 'err');
+    }
+  } catch {
+    toast('Server error.', 'err');
+  }
+}
+
+// ── SAVE: ABOUT ───────────────────────────────────────────────────────────────
+
+async function saveAbout() {
+  const bio    = [0,1,2].map(i => document.getElementById('bio'+i)?.value.trim()).filter(Boolean);
+  const stats  = (state.stats || []).map((_, i) => ({
+    num:   document.getElementById(`stat-num-${i}`)?.value.trim() || '',
+    label: document.getElementById(`stat-lbl-${i}`)?.value.trim() || ''
+  }));
+  const heroTag = document.getElementById('heroTag').value.trim();
+  const heroSub = document.getElementById('heroSub').value.trim();
+  await api('/api/about', { heroTag, heroSub, bio, stats }, 'About section saved.');
+}
+
+// ── SAVE: SERVICES ────────────────────────────────────────────────────────────
+
+async function saveServices() {
+  const services = (state.services || []).map((_, i) => ({
+    icon:        document.getElementById(`svc-icon-${i}`)?.value.trim() || '',
+    title:       document.getElementById(`svc-title-${i}`)?.value.trim() || '',
+    description: document.getElementById(`svc-desc-${i}`)?.value.trim() || ''
+  }));
+  await api('/api/services', { services }, 'Services saved.');
+}
+
+// ── SAVE: MIXES ───────────────────────────────────────────────────────────────
+
+async function saveMixes() {
+  const mixes = (state.mixes || []).map((_, i) => ({
+    title:    document.getElementById(`mix-title-${i}`)?.value.trim() || '',
+    genre:    document.getElementById(`mix-genre-${i}`)?.value.trim() || '',
+    duration: document.getElementById(`mix-dur-${i}`)?.value.trim()   || ''
+  }));
+  await api('/api/mixes', { mixes }, 'Track info saved.');
+}
+
+// ── SAVE: SOCIALS ─────────────────────────────────────────────────────────────
+
+async function loadSocials() {
+  try {
+    const r = await fetch('/api/socials');
+    const s = await r.json();
+    ['tiktok', 'instagram', 'youtube'].forEach(p => {
+      const urlEl    = document.getElementById(p + '_url');
+      const handleEl = document.getElementById(p + '_handle');
+      if (urlEl)    urlEl.value    = s[p + '_url']    || '';
+      if (handleEl) handleEl.value = s[p + '_handle'] || '';
+    });
+  } catch {}
+}
+
+async function saveSocials() {
+  const data = {};
+  ['tiktok', 'instagram', 'youtube'].forEach(p => {
+    data[p + '_url']    = document.getElementById(p + '_url')?.value.trim()    || '';
+    data[p + '_handle'] = document.getElementById(p + '_handle')?.value.trim() || '';
+  });
+  await api('/api/socials', data, 'Social links saved.');
+}
+
+// ── GENRES CHIP INPUT ─────────────────────────────────────────────────────────
+
+let currentGenres = [];
+
+function buildGenreChips(genres) {
+  currentGenres = [...genres];
+  const container = document.getElementById('genre-chips');
+  const input     = document.getElementById('genre-input');
+  container.innerHTML = '';
+  currentGenres.forEach((g, i) => {
+    const chip = document.createElement('div');
+    chip.className = 'genre-chip';
+    chip.innerHTML = `${esc(g)}<button class="genre-chip-remove" title="Remove">✕</button>`;
+    chip.querySelector('button').onclick = () => { currentGenres.splice(i, 1); buildGenreChips(currentGenres); };
+    container.appendChild(chip);
+  });
+  container.appendChild(input);
+  input.value = '';
+}
+
+document.getElementById('genre-input').addEventListener('keydown', e => {
+  const val = e.target.value.trim();
+  if ((e.key === 'Enter' || e.key === ',') && val) {
+    e.preventDefault();
+    if (!currentGenres.includes(val)) { currentGenres.push(val); buildGenreChips(currentGenres); }
+    else e.target.value = '';
+  } else if (e.key === 'Backspace' && !e.target.value && currentGenres.length) {
+    currentGenres.pop(); buildGenreChips(currentGenres);
+  }
+});
+
+document.getElementById('genre-input').addEventListener('blur', e => {
+  const val = e.target.value.trim().replace(/,$/, '');
+  if (val && !currentGenres.includes(val)) { currentGenres.push(val); buildGenreChips(currentGenres); }
+  else e.target.value = '';
+});
+
+async function saveGenres() {
+  await api('/api/genres', { genres: currentGenres }, 'Genres saved.');
+}
+
+// ── AVAILABILITY CALENDAR ─────────────────────────────────────────────────────
+
+let dashBookedDates = new Set();
+let dashYear  = new Date().getFullYear();
+let dashMonth = new Date().getMonth();
+
+const MONTHS = ['January','February','March','April','May','June',
+                'July','August','September','October','November','December'];
+const DAYS   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+const todayObj = new Date();
+const todayStr = `${todayObj.getFullYear()}-${pad(todayObj.getMonth()+1)}-${pad(todayObj.getDate())}`;
+
+function pad(n) { return String(n).padStart(2,'0'); }
+
+function renderDashCal() {
+  document.getElementById('dash-month').textContent = `${MONTHS[dashMonth]} ${dashYear}`;
+  const grid = document.getElementById('dash-grid');
+  grid.innerHTML = '';
+  DAYS.forEach(d => {
+    const el = document.createElement('div');
+    el.className = 'cal-dow-dash';
+    el.textContent = d;
+    grid.appendChild(el);
+  });
+  const firstDay    = new Date(dashYear, dashMonth, 1).getDay();
+  const daysInMonth = new Date(dashYear, dashMonth + 1, 0).getDate();
+  for (let i = 0; i < firstDay; i++) {
+    const el = document.createElement('div');
+    el.className = 'cal-cell empty';
+    grid.appendChild(el);
+  }
+  for (let d = 1; d <= daysInMonth; d++) {
+    const ds   = `${dashYear}-${pad(dashMonth+1)}-${pad(d)}`;
+    const cell = new Date(dashYear, dashMonth, d);
+    const el   = document.createElement('div');
+    let cls = 'cal-cell ';
+    if (ds === todayStr)            cls += 'today';
+    else if (cell < todayObj)       cls += 'past';
+    else if (dashBookedDates.has(ds)) cls += 'booked';
+    else                            cls += 'available';
+    el.className = cls;
+    el.textContent = d;
+    if (!cls.includes('past') && !cls.includes('today')) {
+      el.addEventListener('click', () => {
+        if (dashBookedDates.has(ds)) dashBookedDates.delete(ds);
+        else dashBookedDates.add(ds);
+        renderDashCal();
+      });
+    }
+    grid.appendChild(el);
+  }
+  const prev = document.getElementById('dash-prev');
+  prev.disabled = dashYear === todayObj.getFullYear() && dashMonth === todayObj.getMonth();
+  prev.style.opacity = prev.disabled ? '.3' : '1';
+}
+
+document.getElementById('dash-prev').addEventListener('click', () => {
+  if (dashMonth === 0) { dashMonth = 11; dashYear--; } else { dashMonth--; }
+  renderDashCal();
+});
+document.getElementById('dash-next').addEventListener('click', () => {
+  if (dashMonth === 11) { dashMonth = 0; dashYear++; } else { dashMonth++; }
+  renderDashCal();
+});
+
+async function saveAvailability() {
+  await api('/api/availability', { bookedDates: [...dashBookedDates] }, 'Availability saved.');
+}
+
+// ── EMAIL CONFIG ──────────────────────────────────────────────────────────────
+
+async function loadEmailConfig() {
+  try {
+    const r   = await fetch('/api/email-config');
+    const cfg = await r.json();
+    document.getElementById('emailUser').value = cfg.emailUser || '';
+    document.getElementById('emailTo').value   = cfg.emailTo   || 'inquiries.djab@gmail.com';
+    const badge = document.getElementById('email-status-badge');
+    badge.innerHTML = cfg.configured
+      ? `<span class="status-badge badge-on"><span class="badge-dot"></span> Email Active</span>`
+      : `<span class="status-badge badge-off"><span class="badge-dot"></span> Not Configured</span>`;
+    document.getElementById('ov-email').textContent = cfg.configured ? 'Active' : 'Off';
+  } catch { /**/ }
+}
+
+async function saveEmailConfig() {
+  const emailUser = document.getElementById('emailUser').value.trim();
+  const emailTo   = document.getElementById('emailTo').value.trim();
+  const emailPass = document.getElementById('emailPass').value;
+  if (!emailUser) { toast('Enter a Gmail address.', 'err'); return; }
+  await api('/api/email-config', { emailUser, emailTo, emailPass }, 'Email settings saved.');
+  document.getElementById('emailPass').value = '';
+  loadEmailConfig();
+}
+
+async function testEmail() {
+  try {
+    const r = await fetch('/api/email-test', { method: 'POST' });
+    const j = await r.json();
+    if (j.ok) toast('Test email sent! Check your inbox.', 'ok');
+    else toast(j.error || 'Failed to send test email.', 'err');
+  } catch { toast('Server error.', 'err'); }
+}
+
+// ── SUBMISSIONS ───────────────────────────────────────────────────────────────
+
+async function loadSubmissions() {
+  try {
+    const r    = await fetch('/api/submissions');
+    const subs = await r.json();
+    const list = document.getElementById('submissions-list');
+    document.getElementById('ov-submissions').textContent = subs.length;
+    if (!subs.length) {
+      list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📭</div>No inquiries yet. They'll appear here when someone fills out the contact form.</div>`;
+      return;
+    }
+    list.innerHTML = '<div class="submission-list">' + subs.map(s => `
+      <div class="submission-card" id="sub-${s.id}">
+        <div class="sub-header">
+          <div>
+            <div class="sub-name">${esc(s.name || '—')}</div>
+            <div class="sub-date">${new Date(s.receivedAt).toLocaleString()}</div>
+          </div>
+        </div>
+        <div class="sub-meta">
+          ${s['event-type'] ? `<span class="sub-tag">${esc(s['event-type'])}</span>` : ''}
+          ${s['event-date'] ? `<span class="sub-tag">📅 ${s['event-date']}</span>` : ''}
+          ${s.email ? `<span class="sub-tag">✉ ${esc(s.email)}</span>` : ''}
+          ${s.phone ? `<span class="sub-tag">📞 ${esc(s.phone)}</span>` : ''}
+        </div>
+        ${s.message ? `<div class="sub-message">${esc(s.message)}</div>` : ''}
+        <div class="sub-actions">
+          ${s.email ? `<a href="mailto:${esc(s.email)}?subject=Re: Your DJ AB Booking Inquiry" class="btn btn-outline btn-sm" style="text-decoration:none">↩ Reply</a>` : ''}
+          <button class="btn btn-danger btn-sm" onclick="deleteSub(${s.id})">✕ Delete</button>
+        </div>
+      </div>`).join('') + '</div>';
+  } catch { toast('Could not load submissions.', 'err'); }
+}
+
+async function deleteSub(id) {
+  try {
+    await fetch('/api/submissions/' + id, { method: 'DELETE' });
+    document.getElementById('sub-' + id)?.remove();
+    loadSubmissions();
+  } catch { toast('Could not delete.', 'err'); }
+}
+
+// ── SHARED API HELPER ─────────────────────────────────────────────────────────
+
+async function api(url, body, successMsg) {
+  try {
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const j = await r.json();
+    if (j.ok) { toast(successMsg || 'Saved.', 'ok'); await loadContent(); }
+    else toast(j.error || 'Error saving.', 'err');
+  } catch { toast('Server error — is the dashboard running?', 'err'); }
+}
+
+// ── SERVICE ACCORDION ────────────────────────────────────────────────────────
+
+function toggleSvc(i) {
+  document.getElementById('svc-block-' + i).classList.toggle('open');
+}
+
+// ── IMAGES ────────────────────────────────────────────────────────────────────
+
+async function loadAboutImage() {
+  try {
+    const r = await fetch('/api/images');
+    if (!r.ok) return;
+    const data = await r.json();
+    const preview     = document.getElementById('about-img-preview');
+    const placeholder = document.getElementById('about-img-placeholder');
+    const removeBtn   = document.getElementById('about-img-remove-btn');
+    if (!preview) return;
+    if (data.aboutImage) {
+      preview.src = '/images/' + encodeURIComponent(data.aboutImage);
+      preview.style.display = 'block';
+      if (placeholder) placeholder.style.display = 'none';
+      if (removeBtn)   removeBtn.style.display    = 'inline-flex';
+    } else {
+      preview.style.display = 'none';
+      if (placeholder) placeholder.style.display = 'block';
+      if (removeBtn)   removeBtn.style.display    = 'none';
+    }
+  } catch {}
+}
+
+document.getElementById('about-photo-file').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (file) uploadAboutImage(file);
+});
+
+async function uploadAboutImage(file) {
+  const status = document.getElementById('about-img-status');
+  status.textContent = 'Uploading…';
+  const form = new FormData();
+  form.append('image', file, file.name);
+  try {
+    const r = await fetch('/api/image/upload/about', { method: 'POST', body: form });
+    const j = await r.json();
+    if (j.ok) { status.textContent = ''; toast('About photo uploaded.', 'ok'); loadAboutImage(); }
+    else { status.textContent = j.error || 'Upload failed'; toast(j.error || 'Upload failed.', 'err'); }
+  } catch {
+    status.textContent = 'Upload error';
+    toast('Upload error.', 'err');
+  } finally {
+    document.getElementById('about-photo-file').value = '';
+  }
+}
+
+async function removeAboutImage() {
+  try {
+    const r = await fetch('/api/image/remove/about', { method: 'POST', headers: {'Content-Type':'application/json'}, body: '{}' });
+    const j = await r.json();
+    if (j.ok) { toast('About photo removed.', 'ok'); loadAboutImage(); }
+    else toast(j.error || 'Could not remove.', 'err');
+  } catch { toast('Server error.', 'err'); }
+}
+
+async function loadServiceImages() {
+  try {
+    const r = await fetch('/api/images');
+    if (!r.ok) return;
+    const data = await r.json();
+    (data.serviceImages || []).forEach((imgFile, i) => {
+      const preview     = document.getElementById('svc-img-preview-' + i);
+      const placeholder = document.getElementById('svc-img-placeholder-' + i);
+      const removeBtn   = document.getElementById('svc-img-remove-' + i);
+      if (!preview) return;
+      if (imgFile) {
+        preview.src = '/images/' + encodeURIComponent(imgFile);
+        preview.style.display = 'block';
+        if (placeholder) placeholder.style.display = 'none';
+        if (removeBtn)   removeBtn.style.display    = 'inline-flex';
+      } else {
+        preview.style.display = 'none';
+        if (placeholder) placeholder.style.display = 'block';
+        if (removeBtn)   removeBtn.style.display    = 'none';
+      }
+    });
+  } catch {}
+}
+
+function wireSvcImageInputs() {
+  [0, 1, 2, 3].forEach(i => {
+    const input = document.getElementById('svc-img-file-' + i);
+    if (input) {
+      input.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) uploadSvcImage(i, file);
+      });
+    }
+  });
+}
+
+async function uploadSvcImage(idx, file) {
+  const form = new FormData();
+  form.append('image', file, file.name);
+  try {
+    const r = await fetch('/api/image/upload/service/' + idx, { method: 'POST', body: form });
+    const j = await r.json();
+    if (j.ok) { toast(`Service ${idx + 1} image uploaded.`, 'ok'); loadServiceImages(); }
+    else toast(j.error || 'Upload failed.', 'err');
+  } catch { toast('Upload error.', 'err'); }
+  finally { const el = document.getElementById('svc-img-file-' + idx); if (el) el.value = ''; }
+}
+
+async function removeSvcImage(idx) {
+  try {
+    const r = await fetch('/api/image/remove/service/' + idx, { method: 'POST', headers: {'Content-Type':'application/json'}, body: '{}' });
+    const j = await r.json();
+    if (j.ok) { toast(`Service ${idx + 1} image removed.`, 'ok'); loadServiceImages(); }
+    else toast(j.error || 'Could not remove.', 'err');
+  } catch { toast('Server error.', 'err'); }
+}
+
+// ── PHOTO LIBRARY & ASSIGNMENT ────────────────────────────────────────────────
+
+let galleryImages     = [];
+let currentImageSlots = {};
+
+const ASSIGN_SLOTS = [
+  { target: 'header',    label: 'Hero / Header Background' },
+  { target: 'about',     label: 'About Photo' },
+  { target: 'service/0', label: 'Service 1 Photo' },
+  { target: 'service/1', label: 'Service 2 Photo' },
+  { target: 'service/2', label: 'Service 3 Photo' },
+  { target: 'service/3', label: 'Service 4 Photo' },
+  { target: 'banner',    label: 'Availability Banner Background' },
+];
+
+async function loadGallery() {
+  try {
+    const r = await fetch('/api/gallery');
+    const j = await r.json();
+    galleryImages = j.images || [];
+    renderGalleryGrid();
+    renderAssignGrid();
+  } catch { toast('Could not load photo library.', 'err'); }
+}
+
+function renderGalleryGrid() {
+  const grid = document.getElementById('gallery-grid');
+  if (!galleryImages.length) {
+    grid.innerHTML = '<div class="gallery-empty">No photos uploaded yet. Click "Upload Photos" to add some.</div>';
+    return;
+  }
+  grid.innerHTML = galleryImages.map(f => `
+    <div class="gallery-item">
+      <img src="/images/${encodeURIComponent(f)}" alt="${esc(f)}" />
+      <button class="gallery-item-remove" title="Delete photo" onclick="deleteGalleryPhoto('${f.replace(/'/g, "\\'")}')">✕</button>
+      <div class="gallery-item-name">${esc(f)}</div>
+    </div>`).join('');
+}
+
+document.getElementById('gallery-upload-file').addEventListener('change', async (e) => {
+  const files = Array.from(e.target.files || []);
+  if (!files.length) return;
+  const status = document.getElementById('gallery-upload-status');
+  status.textContent = `Uploading ${files.length} photo${files.length > 1 ? 's' : ''}…`;
+  for (const file of files) {
+    const form = new FormData();
+    form.append('image', file, file.name);
+    try {
+      const r = await fetch('/api/gallery/upload', { method: 'POST', body: form });
+      const j = await r.json();
+      if (!j.ok) toast(j.error || `Failed to upload ${file.name}`, 'err');
+    } catch { toast(`Upload error for ${file.name}`, 'err'); }
+  }
+  status.textContent = '';
+  e.target.value = '';
+  toast('Photos uploaded.', 'ok');
+  loadGallery();
+});
+
+async function deleteGalleryPhoto(filename) {
+  if (!confirm(`Delete "${filename}" from your photo library? This also removes it from any section it's assigned to.`)) return;
+  try {
+    const r = await fetch('/api/gallery/delete', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ filename }) });
+    const j = await r.json();
+    if (j.ok) { toast('Photo deleted.', 'ok'); loadGallery(); loadImageSlots(); loadAboutImage(); loadServiceImages(); }
+    else toast(j.error || 'Could not delete photo.', 'err');
+  } catch { toast('Server error.', 'err'); }
+}
+
+async function loadImageSlots() {
+  try {
+    const r = await fetch('/api/images');
+    currentImageSlots = await r.json();
+    renderAssignGrid();
+  } catch {}
+}
+
+function slotValue(target) {
+  if (target === 'header') return currentImageSlots.headerImage || '';
+  if (target === 'about')  return currentImageSlots.aboutImage  || '';
+  if (target === 'banner') return currentImageSlots.bannerImage || '';
+  if (target.startsWith('service/')) {
+    const idx = parseInt(target.split('/')[1], 10);
+    return (currentImageSlots.serviceImages || [])[idx] || '';
+  }
+  return '';
+}
+
+function slotLabel(slot) {
+  if (slot.target.startsWith('service/')) {
+    const idx = parseInt(slot.target.split('/')[1], 10);
+    const title = state.services && state.services[idx] && state.services[idx].title;
+    return title ? `${title} Photo` : slot.label;
+  }
+  return slot.label;
+}
+
+function renderAssignGrid() {
+  const grid = document.getElementById('assign-grid');
+  if (!grid) return;
+  grid.innerHTML = ASSIGN_SLOTS.map(slot => {
+    const current = slotValue(slot.target);
+    const label   = slotLabel(slot);
+    const options = ['<option value="">— None —</option>']
+      .concat(galleryImages.map(f => `<option value="${esc(f)}" ${f === current ? 'selected' : ''}>${esc(f)}</option>`))
+      .join('');
+    return `
+      <div class="assign-slot">
+        <div class="assign-slot-label">${esc(label)}</div>
+        ${current
+          ? `<img class="assign-slot-preview" src="/images/${encodeURIComponent(current)}" alt="${esc(label)}" />`
+          : `<div class="assign-slot-preview empty">No photo assigned</div>`}
+        <select onchange="assignImage('${slot.target}', this.value)">${options}</select>
+      </div>`;
+  }).join('');
+}
+
+async function assignImage(target, filename) {
+  try {
+    const r = await fetch('/api/image/assign', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ target, filename }) });
+    const j = await r.json();
+    if (j.ok) {
+      toast('Photo assigned.', 'ok');
+      await loadImageSlots();
+      loadAboutImage();
+      loadServiceImages();
+    } else toast(j.error || 'Could not assign photo.', 'err');
+  } catch { toast('Server error.', 'err'); }
+}
+
+// ── COLOR SCHEME ──────────────────────────────────────────────────────────────
+
+const COLOR_PRESETS = [
+  { name: 'Purple / Magenta', accent: '#a855f7', accent2: '#d946ef' },
+  { name: 'Cyan / Blue',      accent: '#00d4ff', accent2: '#3b82f6' },
+  { name: 'Crimson / Rose',   accent: '#f43f5e', accent2: '#fb7185' },
+  { name: 'Emerald / Teal',   accent: '#10b981', accent2: '#14b8a6' },
+  { name: 'Amber / Orange',   accent: '#f59e0b', accent2: '#f97316' },
+  { name: 'Indigo / Sky',     accent: '#6366f1', accent2: '#38bdf8' },
+];
+
+function renderColorPresets() {
+  const wrap = document.getElementById('color-presets');
+  wrap.innerHTML = COLOR_PRESETS.map(p => `
+    <div class="color-preset" onclick="applyPreset('${p.accent}','${p.accent2}')">
+      <span class="color-preset-swatch" style="background:linear-gradient(135deg, ${p.accent}, ${p.accent2})"></span>
+      ${esc(p.name)}
+    </div>`).join('');
+}
+
+function applyPreset(accent, accent2) {
+  setColorInputs(accent, accent2);
+}
+
+function setColorInputs(accent, accent2) {
+  document.getElementById('accent-color').value      = accent;
+  document.getElementById('accent-color-text').value  = accent;
+  document.getElementById('accent2-color').value      = accent2;
+  document.getElementById('accent2-color-text').value = accent2;
+}
+
+async function loadColorScheme() {
+  try {
+    const r = await fetch('/api/colorscheme');
+    const s = await r.json();
+    setColorInputs(s.accent || '#a855f7', s.accent2 || '#d946ef');
+  } catch {}
+}
+
+document.getElementById('accent-color').addEventListener('input', e => {
+  document.getElementById('accent-color-text').value = e.target.value;
+});
+document.getElementById('accent2-color').addEventListener('input', e => {
+  document.getElementById('accent2-color-text').value = e.target.value;
+});
+document.getElementById('accent-color-text').addEventListener('change', e => {
+  if (/^#[0-9a-fA-F]{6}$/.test(e.target.value)) document.getElementById('accent-color').value = e.target.value;
+});
+document.getElementById('accent2-color-text').addEventListener('change', e => {
+  if (/^#[0-9a-fA-F]{6}$/.test(e.target.value)) document.getElementById('accent2-color').value = e.target.value;
+});
+
+async function saveColorScheme() {
+  const accent  = document.getElementById('accent-color-text').value.trim();
+  const accent2 = document.getElementById('accent2-color-text').value.trim();
+  if (!/^#[0-9a-fA-F]{6}$/.test(accent) || !/^#[0-9a-fA-F]{6}$/.test(accent2)) {
+    toast('Enter valid hex colors (e.g. #a855f7).', 'err');
+    return;
+  }
+  await api('/api/colorscheme', { accent, accent2 }, 'Color scheme applied to your website.');
+}
+
+// ── PRESS KIT (EPK) ───────────────────────────────────────────────────────────
+
+async function loadEpkStatus() {
+  try {
+    const r = await fetch('/api/epk');
+    const j = await r.json();
+    const current = document.getElementById('epk-current');
+    const empty   = document.getElementById('epk-empty');
+    if (j.hasEpk) {
+      document.getElementById('epk-current-name').textContent = j.epkOriginalName || j.epkFile;
+      document.getElementById('epk-view-link').href = '/epk/' + encodeURIComponent(j.epkFile);
+      current.style.display = 'flex';
+      empty.style.display   = 'none';
+    } else {
+      current.style.display = 'none';
+      empty.style.display   = 'block';
+    }
+  } catch {}
+}
+
+document.getElementById('epk-upload-file').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const status = document.getElementById('epk-upload-status');
+  status.textContent = 'Uploading…';
+  const form = new FormData();
+  form.append('epk', file, file.name);
+  try {
+    const r = await fetch('/api/epk/upload', { method: 'POST', body: form });
+    const j = await r.json();
+    if (j.ok) { status.textContent = ''; toast('Press kit uploaded.', 'ok'); loadEpkStatus(); }
+    else { status.textContent = ''; toast(j.error || 'Upload failed.', 'err'); }
+  } catch { status.textContent = ''; toast('Upload error.', 'err'); }
+  finally { e.target.value = ''; }
+});
+
+async function removeEpk() {
+  if (!confirm('Remove the press kit? It will no longer be downloadable from your website.')) return;
+  try {
+    const r = await fetch('/api/epk/remove', { method: 'POST', headers: {'Content-Type':'application/json'}, body: '{}' });
+    const j = await r.json();
+    if (j.ok) { toast('Press kit removed.', 'ok'); loadEpkStatus(); }
+    else toast(j.error || 'Could not remove.', 'err');
+  } catch { toast('Server error.', 'err'); }
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+
+loadContent();
+loadEmailConfig();
+loadSubmissions();
+loadSocials();
+loadAboutImage();
+loadServiceImages();
+loadGallery();
+loadImageSlots();
+loadColorScheme();
+renderColorPresets();
+loadEpkStatus();
+</script>
+</body>
+</html>

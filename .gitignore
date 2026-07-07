@@ -1,0 +1,20 @@
+# Secrets & local machine config — never commit
+.env
+config.json
+
+# Client booking-inquiry data (PII) — never commit
+submissions.json
+
+# OS cruft
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+
+# Old backup file, not part of the live site
+Website.html.bak
+
+# Original uncompressed WAV masters (100s of MB — too large for GitHub,
+# and unnecessary since public/audio/ has the compressed .m4a versions)
+audio-originals/

@@ -1,0 +1,22 @@
+{
+  "emailUser": "you@gmail.com",
+  "emailTo": "you@gmail.com",
+  "socials": {
+    "tiktok_url": "",
+    "tiktok_handle": "@yourhandle",
+    "instagram_url": "",
+    "instagram_handle": "@yourhandle",
+    "youtube_url": "",
+    "youtube_handle": "Your Channel"
+  },
+  "aboutImage": "",
+  "serviceImages": ["", "", "", ""],
+  "headerImage": "",
+  "bannerImage": "",
+  "colorScheme": {
+    "accent": "#a855f7",
+    "accent2": "#d946ef"
+  },
+  "epkFile": "",
+  "epkOriginalName": ""
+}
