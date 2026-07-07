@@ -10,7 +10,7 @@ from urllib.parse import urlparse
 
 PORT      = 3456
 BASE      = os.path.dirname(os.path.abspath(__file__))
-PUBLIC    = os.path.join(BASE, 'public')
+PUBLIC    = os.path.join(BASE, 'docs')
 SITE      = os.path.join(PUBLIC, 'index.html')
 CFG       = os.path.join(BASE, 'config.json')
 SUBS      = os.path.join(BASE, 'submissions.json')

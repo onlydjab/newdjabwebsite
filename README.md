@@ -5,7 +5,8 @@ A single-page site for DJ AB (Auburn, AL), plus a local admin dashboard for edit
 ## Repo structure
 
 ```
-public/              ← the live static site (this is what gets deployed to GitHub Pages)
+docs/                ← the live static site (this is what gets deployed to GitHub Pages —
+                        GitHub Pages only allows "/ (root)" or "/docs" as the source folder)
   index.html
   sitemap.xml
   robots.txt
@@ -22,7 +23,7 @@ submissions.json      ← booking-form submissions captured locally (gitignored,
 Start Dashboard.command
 ```
 
-`public/` is the only folder that gets published. `dashboard.html`, `server.py`, `config.json`,
+`docs/` is the only folder that gets published. `dashboard.html`, `server.py`, `config.json`,
 and `submissions.json` stay out of the deployed site entirely — the dashboard is a local editing
 tool only, it is never exposed to the internet.
 
@@ -43,12 +44,12 @@ No pip installs needed — `server.py` only uses the Python standard library.
 ### A note on the dashboard and the deployed site
 
 Editing **About/Services/Mixes/Genres/Availability text** through the dashboard writes directly
-into `public/index.html`, so those changes are picked up the next time you commit and push.
+into `docs/index.html`, so those changes are picked up the next time you commit and push.
 
 Editing **photos, the EPK file, or social links** through the dashboard updates `config.json`
-(local only) and the files under `public/images` / `public/epk`. Because the deployed site is
+(local only) and the files under `docs/images` / `docs/epk`. Because the deployed site is
 static (no backend to read `config.json` at runtime), if you swap an image or the EPK file via
-the dashboard, also open `public/index.html` and update the matching `<img src="...">` /
+the dashboard, also open `docs/index.html` and update the matching `<img src="...">` /
 Press-Kit reference by hand before pushing, so the live site matches what you set locally.
 
 ## Deploying (GitHub Pages)
@@ -62,11 +63,11 @@ Press-Kit reference by hand before pushing, so the live site matches what you se
    git push -u origin main
    ```
 4. On GitHub: **Settings → Pages** → Source: "Deploy from a branch" → Branch: `main`,
-   folder: `/public`. Save.
+   folder: `/docs`. Save.
 5. GitHub will publish the site at `https://<your-username>.github.io/<your-repo>/`
    within a minute or two.
 6. Once you own `onlydjab.com` (see next section), add it under
-   **Settings → Pages → Custom domain**, and GitHub will create a `CNAME` file in `public/`
+   **Settings → Pages → Custom domain**, and GitHub will create a `CNAME` file in `docs/`
    for you (commit it if it doesn't show up automatically).
 
 ## Contact form (Formspree)
@@ -76,7 +77,7 @@ GitHub Pages can't run a backend.
 
 1. Sign up free at https://formspree.io and create a new form (free tier: 50 submissions/month).
 2. Copy the form endpoint it gives you (looks like `https://formspree.io/f/xxxxxxxx`).
-3. In `public/index.html`, find the line:
+3. In `docs/index.html`, find the line:
    ```js
    const FORMSPREE_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID';
    ```
@@ -89,7 +90,7 @@ GitHub Pages can't run a backend.
 1. Register `onlydjab.com` through any registrar (Namecheap, Google Domains successor
    Squarespace Domains, Cloudflare Registrar, etc.) — check availability first.
 2. In GitHub: **Settings → Pages → Custom domain**, enter `onlydjab.com`. This creates/updates
-   a `CNAME` file in `public/` with that domain.
+   a `CNAME` file in `docs/` with that domain.
 3. At your registrar, add these DNS records (GitHub Pages' current apex IPs):
    ```
    A     @     185.199.108.153
