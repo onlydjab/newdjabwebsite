@@ -594,6 +594,18 @@
 
     /* PRESS KIT / EPK */
     #epk { background: var(--bg2); }
+    .epk-preview {
+      display: block; max-width: 420px; margin: 0 auto 2rem;
+      border-radius: 10px; overflow: hidden;
+      border: 1px solid rgba(139, 92, 246, .35);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .5);
+      transition: transform .3s ease, box-shadow .3s ease;
+    }
+    .epk-preview:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 28px 70px rgba(139, 92, 246, .25);
+    }
+    .epk-preview img { width: 100%; display: block; }
 
     /* AVAILABILITY CALENDAR */
     #availability { background: var(--bg); }
@@ -1061,8 +1073,10 @@
       <p style="color:#999; line-height:1.8; margin-bottom:1.8rem;">
         Download the DJ AB electronic press kit — bio, photos, and booking info in one file.
       </p>
-      <a href="#" id="epk-download" class="btn-primary" style="display:none">⬇ Download Press Kit</a>
-      <p id="epk-unavailable" style="color:#777; font-size:.9rem;">Press kit coming soon.</p>
+      <a href="epk/djab-press-kit.jpg" target="_blank" rel="noopener" class="epk-preview" aria-label="View the DJ AB press kit full size">
+        <img src="epk/djab-press-kit.jpg" alt="DJ AB electronic press kit — biography, sound, performance highlights, and equipment" loading="lazy" />
+      </a>
+      <a href="epk/djab-press-kit.jpg" id="epk-download" class="btn-primary" download="DJ-AB-Press-Kit.jpg">⬇ Download Press Kit</a>
     </div>
   </div>
 </section>
@@ -1470,85 +1484,6 @@
     const badge = track.querySelector('.no-audio-badge');
     if (badge && track.dataset.audio) badge.style.display = 'none';
   });
-
-  // ── Images (about photo + service images) ─────────────────────────────────
-  async function loadImages() {
-    try {
-      const r = await fetch('/api/images');
-      if (!r.ok) return;
-      const data = await r.json();
-
-      // About photo
-      if (data.aboutImage) {
-        const img  = document.getElementById('about-photo');
-        const icon = document.getElementById('about-icon');
-        if (img)  { img.src = '/images/' + encodeURIComponent(data.aboutImage); img.style.display = 'block'; }
-        if (icon) icon.style.display = 'none';
-      }
-
-      // Service card images — inject into each .service-card at index
-      const cards = document.querySelectorAll('.service-card');
-      (data.serviceImages || []).forEach((imgFile, i) => {
-        if (!imgFile || !cards[i]) return;
-        const existing = cards[i].querySelector('.service-card-img');
-        if (existing) existing.remove();
-        const div = document.createElement('div');
-        div.className = 'service-card-img';
-        const h3 = cards[i].querySelector('h3');
-        div.innerHTML = `<img src="/images/${encodeURIComponent(imgFile)}" alt="${h3 ? h3.textContent : 'DJ service'}" />`;
-        cards[i].insertBefore(div, cards[i].firstChild);
-      });
-
-      // Hero / header background photo
-      if (data.headerImage) {
-        const heroPhoto = document.querySelector('.hero-photo');
-        if (heroPhoto) heroPhoto.style.backgroundImage = `url('/images/${encodeURIComponent(data.headerImage)}')`;
-      }
-
-      // Banner CTA background photo
-      if (data.bannerImage) {
-        const bannerPhoto = document.querySelector('.banner-cta-photo');
-        if (bannerPhoto) bannerPhoto.style.backgroundImage = `url('/images/${encodeURIComponent(data.bannerImage)}')`;
-      }
-    } catch {}
-  }
-  loadImages();
-
-  // ── Press Kit (EPK) ────────────────────────────────────────────────────────
-  async function loadEpk() {
-    try {
-      const r = await fetch('/api/epk');
-      if (!r.ok) return;
-      const data = await r.json();
-      const link = document.getElementById('epk-download');
-      const empty = document.getElementById('epk-unavailable');
-      if (data.hasEpk) {
-        link.href = '/epk/' + encodeURIComponent(data.epkFile);
-        link.style.display = 'inline-block';
-        if (empty) empty.style.display = 'none';
-      }
-    } catch {}
-  }
-  loadEpk();
-
-  // ── Socials ────────────────────────────────────────────────────────────────
-  async function loadSocials() {
-    try {
-      const r = await fetch('/api/socials');
-      if (!r.ok) return;
-      const s = await r.json();
-      const platforms = ['tiktok', 'instagram', 'youtube'];
-      platforms.forEach(p => {
-        const card   = document.getElementById('social-' + p);
-        const handle = document.getElementById('social-' + p + '-handle');
-        const footer = document.getElementById('contact-' + p);
-        if (card   && s[p + '_url'])    card.href   = s[p + '_url'];
-        if (handle && s[p + '_handle']) handle.textContent = s[p + '_handle'];
-        if (footer && s[p + '_url'])    footer.href = s[p + '_url'];
-      });
-    } catch {}
-  }
-  loadSocials();
 
   // ── Availability Calendar ──────────────────────────────────────────────────
   const bookedDates = new Set([
