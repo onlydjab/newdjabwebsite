@@ -1215,6 +1215,10 @@
           <textarea id="message" name="message" placeholder="Venue, expected guests, music preferences, special requests…"></textarea>
         </div>
         <button type="submit" class="form-submit">Send Booking Inquiry &#8594;</button>
+        <p id="form-error" style="display:none; color:#ef9a9a; font-size:.9rem; margin-top:1rem; text-align:center;">
+          Something went wrong sending your inquiry. Please email
+          <a href="mailto:inquiries.djab@gmail.com" style="color:#c9a7ff;">inquiries.djab@gmail.com</a> directly.
+        </p>
       </form>
     </div>
   </div>
@@ -1326,22 +1330,30 @@
     btn.textContent = 'Sending…';
     btn.disabled = true;
     const data = Object.fromEntries(new FormData(e.target).entries());
+    let sent = false;
     try {
       const r = await fetch(FORMSPREE_ENDPOINT, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body:    JSON.stringify(data)
       });
-      if (!r.ok) throw new Error();
+      sent = r.ok;
     } catch { /* submission service unreachable */ }
-    btn.textContent     = '✓ Inquiry Sent!';
-    btn.style.background = '#00c853';
+    if (sent) {
+      btn.textContent     = '✓ Inquiry Sent!';
+      btn.style.background = '#00c853';
+    } else {
+      btn.textContent     = '✕ Couldn’t send — email inquiries.djab@gmail.com';
+      btn.style.background = '#c62828';
+      const err = document.getElementById('form-error');
+      if (err) err.style.display = 'block';
+    }
     setTimeout(() => {
       btn.textContent     = orig;
       btn.style.background = '';
       btn.disabled         = false;
-      e.target.reset();
-    }, 4000);
+      if (sent) e.target.reset();
+    }, sent ? 4000 : 8000);
   }
 
   // ── Audio Player ───────────────────────────────────────────────────────────
